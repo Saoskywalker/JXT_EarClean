@@ -16,7 +16,7 @@ void MTF_timer_init_handle(void)
 	/*
 	(3)设置Timer周期
 	*/	
-	TMR_ConfigTimerPeriod(TMR3, 256-100, 256-100); 				// 100*1us = 100us,递增计数, 8位自动重装模式下设置计算器和重装值
+	TMR_ConfigTimerPeriod(TMR3, 256-200, 256-200); 				// 200*1us = 200us,递增计数, 8位自动重装模式下设置计算器和重装值
 		
 	/*
 	(4)开启中断

@@ -9,7 +9,7 @@ void MTF_watch_dog_init(void)
 	/*
 	(2)开启WDT溢出时间
 	*/
-	WDT_ConfigOverflowTime(WDT_CLK_1048576);	// Fsys=4Mhz -> Twdt = 131072/4 = 32.768ms
+	WDT_ConfigOverflowTime(WDT_CLK_131072);	// Fsys=4Mhz -> Twdt = 131072/4 = 32.768ms
 	SYS_EnableWDTReset(); //开启WDT复位
 	// SYS_DisableWDTReset();
 

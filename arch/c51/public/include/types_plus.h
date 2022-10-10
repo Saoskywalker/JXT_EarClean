@@ -72,7 +72,7 @@ typedef unsigned int *    PUINT;    ///< Define integer unsigned pointer data ty
 
 typedef struct
 {
-  uint8_t _100us : 1;
+  uint8_t _200us : 1;
   uint8_t _1ms : 1;
   uint8_t _2ms : 1;
   uint8_t _10ms : 1;
