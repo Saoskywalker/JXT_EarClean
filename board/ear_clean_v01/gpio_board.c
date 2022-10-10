@@ -22,12 +22,12 @@ void main_IO_init(void)
     //key2
     GPIO_SET_MUX_MODE(P25CFG, GPIO_MUX_GPIO); //设置为普通IO
     GPIO_ENABLE_INPUT(P2TRIS, GPIO_PIN_5); //设置为输入(默认高阻)
-    GPIO_ENABLE_UP(P2UP, GPIO_PIN_5);
+    GPIO_ENABLE_UP(P2UP, GPIO_PIN_5); //开上拉电阻
 
     //vcc_ck
     GPIO_SET_MUX_MODE(P26CFG, GPIO_MUX_GPIO); //设置为普通IO
     GPIO_ENABLE_INPUT(P2TRIS, GPIO_PIN_6); //设置为输入(默认高阻)
-    GPIO_ENABLE_RD(P2RD, GPIO_PIN_6); //开下拉电阻
+    // GPIO_ENABLE_RD(P2RD, GPIO_PIN_6); //开下拉电阻
 
     //pwm(正常工作时配置为PWM输出, 睡眠为普通IO, 软件操作)
     GPIO_SET_MUX_MODE(P30CFG, GPIO_MUX_GPIO);
@@ -37,7 +37,7 @@ void main_IO_init(void)
     //CHG
     GPIO_SET_MUX_MODE(P31CFG, GPIO_MUX_GPIO); //设置为普通IO
     GPIO_ENABLE_INPUT(P3TRIS, GPIO_PIN_1); //设置为输入(默认高阻)
-    GPIO_ENABLE_UP(P3UP, GPIO_PIN_1); //开上拉电阻
+    // GPIO_ENABLE_UP(P3UP, GPIO_PIN_1); //开上拉电阻
 
     //COM4
     GPIO_SET_MUX_MODE(P23CFG, GPIO_MUX_GPIO); //设置为普通IO
@@ -97,13 +97,13 @@ void main_IO_init(void)
     /*
     (2)设置外部中断
     */
-    GPIO_SET_INT_MODE(P24EICFG, GPIO_INT_RISING); //设置为上升沿中断模式
+    GPIO_SET_INT_MODE(P24EICFG, GPIO_INT_BOTH_EDGE); //设置为双沿中断模式
     GPIO_EnableInt(GPIO2, GPIO_PIN_4_MSK);        //开启P24中断
 
-    GPIO_SET_INT_MODE(P25EICFG, GPIO_INT_RISING); //设置为上升沿中断模式
+    GPIO_SET_INT_MODE(P25EICFG, GPIO_INT_BOTH_EDGE); //设置为双沿中断模式
     GPIO_EnableInt(GPIO2, GPIO_PIN_5_MSK);        //开启P25中断
 
-    GPIO_SET_INT_MODE(P26EICFG, GPIO_INT_RISING); //设置为上升沿中断模式
+    GPIO_SET_INT_MODE(P26EICFG, GPIO_INT_BOTH_EDGE); //设置为双沿中断模式
     GPIO_EnableInt(GPIO2, GPIO_PIN_6_MSK);        //开启P26中断
 
     /*

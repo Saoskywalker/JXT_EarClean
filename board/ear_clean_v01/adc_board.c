@@ -1,5 +1,5 @@
 #include "adc_board.h"
-#include "stdio.h"
+// #include "stdio.h"
 
 // #define MTF_ADC_debug(...) printf(__VA_ARGS__)
 
@@ -7,19 +7,26 @@ uint16_t _adc_value[ADC_CHANNEL_TOTAL] = {2047, 2047, 2047};
 void adc_run(void)
 {
     static uint16_t adc_result = 20000;
-    static uint8_t sample_count = 0, channel_count = 0, _reject_count = 0;
+    static uint8_t sample_count = 255, channel_count = 0, _reject_count = 0;
 
-    if (sample_count == 0)
+    if (sample_count >= 8)
     {
-        sample_count = 8;                            //单通道采样次数
+        sample_count = 0;                            //单通道采样次数
         _reject_count = 0;
-        _adc_value[channel_count] = adc_result >> 3; // adc_result/8, 注意复位的第一次值
+        // _adc_value[channel_count] = adc_result >> 3; // adc_result/8, 注意复位的第一次值
+        //因在51 MCU上 _adc_value[channel_count] 处理慢
+        if (channel_count == 0)
+            _adc_value[0] = adc_result >> 3;
+        else if (channel_count == 1)
+            _adc_value[1] = adc_result >> 3;
+        else if (channel_count == 2)
+            _adc_value[2] = adc_result >> 3;
         adc_result = 0;
 
         if (++channel_count > ADC_CHANNEL_TOTAL)
         {
             channel_count = 0;
-            printf("ad: %d, %d, %d\r\n", _adc_value[0], _adc_value[1], _adc_value[2]);
+            // printf("ad: %d, %d, %d\r\n", _adc_value[0], _adc_value[1], _adc_value[2]);
         }
 
         //为保证结果准确度, 切换通道后建议500ns后开采样
@@ -46,7 +53,7 @@ void adc_run(void)
             // if (MM_adc1_get_state() == 0) //是否转换完成
             {
                 adc_result += MM_adc1_get_result(); //获取AD值
-                sample_count--;
+                sample_count++;
             }
         }
         MM_adc1_convert_start(); //开启转换

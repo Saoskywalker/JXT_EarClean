@@ -115,6 +115,10 @@ typedef char bool;
 // #define NULL		((void *)0)
 // #endif
 
+//declare data storage in rom
+#define IN_ROM code
+// #define IN_ROM const 
+
 #ifdef __cplusplus
 }
 #endif

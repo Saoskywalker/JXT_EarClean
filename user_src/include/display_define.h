@@ -13,14 +13,10 @@
 #define Dsp_RESlocate(X, N) (LED_data_buf[X] &= ~(N))
 #define Dsp_locate(X, N) (LED_data_buf[X] |= (N))
 
-#define WATER_locate Dsp_locate(3, bit2)
-#define UVC_locate Dsp_locate(3, bit0)
-#define WIFI_locate Dsp_locate(3, bit1)
-#define DRY_locate Dsp_locate(3, bit3)
-#define TIMER_locate Dsp_locate(3, bit4)
-#define DRY_Clothes_locate Dsp_locate(3, bit5)
-#define NC_LED1 Dsp_locate(3, bit6)
-#define NC_LED2 Dsp_locate(3, bit7)
+#define low_locate Dsp_locate(3, bit5)
+#define medium_locate Dsp_locate(3, bit2)
+#define high_locate Dsp_locate(3, bit1)
+#define pulse_locate Dsp_locate(3, bit3)
 /////////////////////////////////////
 
 //==============================================================================

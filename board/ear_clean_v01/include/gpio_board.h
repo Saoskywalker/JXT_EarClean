@@ -19,7 +19,7 @@
 #define MOTOR_PIN(x) P30 = x
 #define CHARGE_CHECK() P31
 
-#define COMDIG4_PIN(x) P23 = x
+#define COMDIG4_PIN(x) //P23 = x
 #define SEG_A_PIN(x) P22 = x
 #define COMDIG1_PIN(x) P17 = x
 #define SEG_B_PIN(x) P16 = x

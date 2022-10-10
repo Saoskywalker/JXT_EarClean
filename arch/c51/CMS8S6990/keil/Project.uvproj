@@ -309,7 +309,7 @@
             <InterruptVectorAddress>0</InterruptVectorAddress>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_FORMULA</Define>
+              <Define></Define>
               <Undefine></Undefine>
               <IncludePath>..\Libary\Device\CMS8S6990\Include;..\Libary\StdDriver\inc;..\code;..\..\..\..\board\ear_clean_v01\include;..\port\include;..\..\public\include;..\..\..\..\user_src\include</IncludePath>
             </VariousControls>

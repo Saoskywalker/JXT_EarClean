@@ -221,30 +221,51 @@ void Led_Clear_All(void)
 }
 
 /*************************************************
+ // 函数名称    : Led_dis_All
+ // 功能描述    : 清除所有显示
+ // 入口参数    : 无
+ // 出口参数    : 无
+***************************************************/
+void Led_dis_All(void)
+{
+  uint8_t i;
+  for (i = 0; i < LED_COM_TOTAL; i++)
+  {
+    LED_data_buf[i] = 0XFF;
+  }
+}
+
+/*************************************************
  // 函数名称    : Led_scan
  // 功能描述    : 此函数在prg_ms1()中执行
  // 入口参数    : 无
  // 出口参数    : 无
 ***************************************************/
 #define LED_SCAN_INTERVAL 2  //通道和显示更新间隔
+#define LED_LIGHT_LEVEL 2 //亮度等级
 uint8_t LED_data[LED_COM_TOTAL] = {0}; //数码管显示输出缓存
 uint8_t LED_data_buf[LED_COM_TOTAL] = {0}; //LED显示data
 void Led_Scan(void)
 {
   static uint8_t led_scan_time = 0;        // LED扫描时间
   static uint8_t led_scan_position = 0;    // LED扫描位
+  static uint8_t led_light_level_cnt = 0;
 
+  if (++led_light_level_cnt >= LED_LIGHT_LEVEL)
+  {
+    //关COM口
+    COMDIG1_PIN_OFF;
+    COMDIG2_PIN_OFF;
+    COMDIG3_PIN_OFF;
+    COMDIG4_PIN_OFF;
+  }
+  
   if (++led_scan_time < LED_SCAN_INTERVAL)
   {
     return;
   }
   led_scan_time = 0;
-
-  //关COM口
-  COMDIG1_PIN_OFF;
-  COMDIG2_PIN_OFF;
-  COMDIG3_PIN_OFF;
-  COMDIG4_PIN_OFF;
+  led_light_level_cnt = 0;
 
   if (led_scan_position == 0) // COM1
   {
