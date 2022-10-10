@@ -300,7 +300,7 @@ static void battery_deal(void)
 		{
 			EarClean_battery_level = BATTERY_HIGH;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2662) // 3.9V
+		else if (ADC_BATTERY_VALUE() >= 2662 && EarClean_battery_level >= BATTERY_FULL) // 3.9V
 		{
 			EarClean_battery_level = BATTERY_FULL;
 		}
