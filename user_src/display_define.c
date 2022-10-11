@@ -62,9 +62,18 @@ void Disp_All(void)
 /***********************************************
  * 显示放电剩余电量
 *************************************************/
-static void dis_residue_battery(void)
+static void dis_residue_battery(uint8_t state)
 {
   static uint8_t _dis_cnt = 0, _dis_flash_500ms = 0, _cnt_flash = 0, temp_edge = 0;
+
+  if (state == 0) //关闭功能
+  {
+    _dis_cnt = 0;
+    _dis_flash_500ms = 0;
+    _cnt_flash = 0;
+    temp_edge = 0;
+    return;
+  }
 
   if (++_dis_cnt >= 50)
   {
@@ -232,11 +241,8 @@ static void LedDsp_content(void)
         dig3_num = DATA_F;
       }
 
-      if(EarClean_flag.disp_battery_level)
-      {
-        dis_residue_battery();
-      }
-      else
+      dis_residue_battery(EarClean_flag.disp_battery_level);
+      if(!EarClean_flag.disp_battery_level)
       {
         if (EarClean_battery_level <= BATTERY_LV0 && !_dis_500ms) //低电量闪烁
         {
@@ -256,11 +262,8 @@ static void LedDsp_content(void)
     }
     else
     {
-      if(EarClean_flag.disp_battery_level)
-      {
-        dis_residue_battery();
-      }
-      else
+      dis_residue_battery(EarClean_flag.disp_battery_level);
+      if(!EarClean_flag.disp_battery_level)
       {
         EarClean_flag.sleep = 1; //进入睡眠命令统一由此发出, 由sleep运行event_handle退出
       }

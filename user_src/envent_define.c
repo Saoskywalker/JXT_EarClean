@@ -15,10 +15,10 @@ void event_produce(void)
 
     key = key_get_result();
 
-    if (!(key & bit1) && (key_old & bit1)) //单击模式键, 松开
+    if ((key & bit1) && !(key_old & bit1)) //单击模式键
         sys_envent |= MODE_KEY;
 
-    if (!(key & bit0) && (key_old & bit0)) //单击电源键, 松开
+    if ((key & bit0) && !(key_old & bit0)) //单击电源键
         sys_envent |= DIS_BATTERY;
 
     if ((key & bit2)) //插入充电线
@@ -94,6 +94,7 @@ void event_handle(void)
                         EarClean_flag.sleep = 0;
                     }
                 }
+                EarClean_flag.disp_battery_level = 0; //取消电量显示
             }
             break;
         case USB_INSERT:
