@@ -196,7 +196,7 @@ static void temp_deal(void)
 
 	if (EarClean_flag.sys_ready)
 	{
-		if (++cnt_delay < 500) //延迟更新温度 5s
+		if (++cnt_delay < 50) //延迟更新温度 0.5s
 			return;
 		cnt_delay = 0;
 	}
