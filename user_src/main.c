@@ -1,4 +1,4 @@
-#include "EarClean_global.h"
+#include "app_global.h"
 #include "types_plus.h"
 #include "gpio_board.h"
 #include "pwm_board.h"
@@ -9,12 +9,12 @@
 #include "watch_dog_port.h"
 #include "display_define.h"
 #include "envent_define.h"
-#include "EarClean_timer.h"
+#include "app_timer.h"
 #include "ad_table.h"
 
-EarClean_flag_type EarClean_flag = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+app_flag_type app_flag = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t light_mode = LED_MODE_A, app_work_mode = MODE_A;
-uint8_t EarClean_battery_level = BATTERY_FULL;
+uint8_t app_battery_level = BATTERY_FULL;
 
 /*****************************
  * 电机控制输出
@@ -24,7 +24,7 @@ static void motor_function(void)
 	static uint16_t pulse_count = 0;
 	static uint8_t new_mode = 0;
 
-	if (EarClean_flag.work)
+	if (app_flag.work)
 	{
 		if(new_mode!=app_work_mode)
 		{
@@ -167,7 +167,7 @@ static void temp_deal(void)
 	static uint8_t Temp_Err_Cont = 0;
 	static uint16_t cnt_delay = 0;
 
-	if (EarClean_flag.sys_ready)
+	if (app_flag.sys_ready)
 	{
 		if (++cnt_delay < 50) //延迟更新温度 0.5s
 			return;
@@ -180,7 +180,7 @@ static void temp_deal(void)
 		{
 			Temp_Err_Cont = 0;
 			water_temp.status = AD_CUT;
-			EarClean_flag.ntc_error = 1;
+			app_flag.ntc_error = 1;
 			water_temp.C_value = -128;
 			water_temp.value = -128;
 		}
@@ -191,7 +191,7 @@ static void temp_deal(void)
 		{
 			Temp_Err_Cont = 0;
 			water_temp.status = AD_SHORT;
-			EarClean_flag.ntc_error = 1;
+			app_flag.ntc_error = 1;
 			water_temp.C_value = -128;
 			water_temp.value = -128;
 		}
@@ -200,7 +200,7 @@ static void temp_deal(void)
 	{
 		Temp_Err_Cont = 0;
 		water_temp.status = AD_NORMAL;
-		EarClean_flag.ntc_error = 0;
+		app_flag.ntc_error = 0;
 
 		//表从0C开始, 表为下拉电阻, 但实际电路为上拉电阻
 		water_temp.C_value = (int8_t)ADC_lookup(4096-ADC_NTC_VALUE(), TempC_tab_10k_3435, sizeof(TempC_tab_10k_3435)/sizeof(uint16_t));
@@ -212,57 +212,57 @@ static void battery_deal(void)
 {
 	// Vref=2.4, 分压为1/2, Vin = 2*AD*2.4/4096+0.5(四舍五入), AD = (Vin)*4096/4.8+0.5(四舍五入)
 
-	if (EarClean_flag.sys_ready == 0 || EarClean_flag.sleep_updata)
+	if (app_flag.sys_ready == 0 || app_flag.sleep_updata)
 	{
 		if (ADC_BATTERY_VALUE() >= 4000) //voltage over high
 		{
-			EarClean_battery_level = BATTERY_HIGH;
+			app_battery_level = BATTERY_HIGH;
 		}
 		else if (ADC_BATTERY_VALUE() >= 3328) // 3.9V
 		{
-			EarClean_battery_level = BATTERY_FULL;
+			app_battery_level = BATTERY_FULL;
 		}
 		else if (ADC_BATTERY_VALUE() >= 3157) // 3.7V
 		{
-			EarClean_battery_level = BATTERY_LV2;
+			app_battery_level = BATTERY_LV2;
 		}
 		else if (ADC_BATTERY_VALUE() >= 2987) // 3.5V
 		{
-			EarClean_battery_level = BATTERY_LV1;
+			app_battery_level = BATTERY_LV1;
 		}
 		else if (ADC_BATTERY_VALUE() >= 2645) // 3.1V
 		{
-			EarClean_battery_level = BATTERY_LV0;
+			app_battery_level = BATTERY_LV0;
 		}
 		else // 2.9V
 		{
-			EarClean_battery_level = BATTERY_LOSE;
+			app_battery_level = BATTERY_LOSE;
 		}
 		return;
 	}
 	
-	if(EarClean_flag.usb_insert)
+	if(app_flag.usb_insert)
 	{
 		//单向往上走
 		if (ADC_BATTERY_VALUE() >= 4000) //voltage over high
 		{
-			EarClean_battery_level = BATTERY_HIGH;
+			app_battery_level = BATTERY_HIGH;
 		}
 		else if (ADC_BATTERY_VALUE() >= 3328) // 3.9V
 		{
-			EarClean_battery_level = BATTERY_FULL;
+			app_battery_level = BATTERY_FULL;
 		}
-		else if (ADC_BATTERY_VALUE() >= 3157 && EarClean_battery_level <= BATTERY_LV2) // 3.7V
+		else if (ADC_BATTERY_VALUE() >= 3157 && app_battery_level <= BATTERY_LV2) // 3.7V
 		{
-			EarClean_battery_level = BATTERY_LV2;
+			app_battery_level = BATTERY_LV2;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2987 && EarClean_battery_level <= BATTERY_LV1) // 3.5V
+		else if (ADC_BATTERY_VALUE() >= 2987 && app_battery_level <= BATTERY_LV1) // 3.5V
 		{
-			EarClean_battery_level = BATTERY_LV1;
+			app_battery_level = BATTERY_LV1;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2645 && EarClean_battery_level <= BATTERY_LV0) // 3.1V
+		else if (ADC_BATTERY_VALUE() >= 2645 && app_battery_level <= BATTERY_LV0) // 3.1V
 		{
-			EarClean_battery_level = BATTERY_LV0;
+			app_battery_level = BATTERY_LV0;
 		}
 	}
 	else
@@ -270,27 +270,27 @@ static void battery_deal(void)
 		//单向往下走
 		if (ADC_BATTERY_VALUE() >= 4000) //voltage over high
 		{
-			EarClean_battery_level = BATTERY_HIGH;
+			app_battery_level = BATTERY_HIGH;
 		}
-		else if (ADC_BATTERY_VALUE() >= 3328 && EarClean_battery_level >= BATTERY_FULL) // 3.9V
+		else if (ADC_BATTERY_VALUE() >= 3328 && app_battery_level >= BATTERY_FULL) // 3.9V
 		{
-			EarClean_battery_level = BATTERY_FULL;
+			app_battery_level = BATTERY_FULL;
 		}
-		else if (ADC_BATTERY_VALUE() >= 3157 && EarClean_battery_level >= BATTERY_LV2) // 3.7V
+		else if (ADC_BATTERY_VALUE() >= 3157 && app_battery_level >= BATTERY_LV2) // 3.7V
 		{
-			EarClean_battery_level = BATTERY_LV2;
+			app_battery_level = BATTERY_LV2;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2987 && EarClean_battery_level >= BATTERY_LV1) // 3.5V
+		else if (ADC_BATTERY_VALUE() >= 2987 && app_battery_level >= BATTERY_LV1) // 3.5V
 		{
-			EarClean_battery_level = BATTERY_LV1;
+			app_battery_level = BATTERY_LV1;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2645 && EarClean_battery_level >= BATTERY_LV0) // 3.1V
+		else if (ADC_BATTERY_VALUE() >= 2645 && app_battery_level >= BATTERY_LV0) // 3.1V
 		{
-			EarClean_battery_level = BATTERY_LV0;
+			app_battery_level = BATTERY_LV0;
 		}
 		else // 2.9V
 		{
-			EarClean_battery_level = BATTERY_LOSE;
+			app_battery_level = BATTERY_LOSE;
 		}
 	}
 }
@@ -299,11 +299,11 @@ static void motor_current_deal(void)
 {
 	if (ADC_MOTOR_CURRENT_VALUE() >= 1024) //采样电阻0.5, AD = 4096/Vref*(0.5*Imax)
 	{
-		EarClean_flag.current_error = 1;
+		app_flag.current_error = 1;
 	}
 	else
 	{
-		EarClean_flag.current_error = 0;
+		app_flag.current_error = 0;
 	}
 }
 
@@ -311,28 +311,28 @@ static void sleep(void)
 {
 	uint16_t check_count = 0;
 	
-	if(EarClean_flag.sleep)
+	if(app_flag.sleep)
 	{
 		MM_adc1_suspend();
 		PWM_SUSPEND();
 		main_IO_exit();
 
-		while (EarClean_flag.sleep)
+		while (app_flag.sleep)
 		{
 			MTF_sys_stop(); //进入休眠模式
 			check_count = 0;
 			while (check_count < 300)
 			{
 				MTF_watch_dog_feed();
-				EarClean_flag.sleep_updata = 1;
-				if (EarClean_timer_flag._10ms)
+				app_flag.sleep_updata = 1;
+				if (app_timer_flag._10ms)
 				{
-					EarClean_timer_flag._10ms = 0;
+					app_timer_flag._10ms = 0;
 					event_produce();
 					event_handle();
 					check_count++;
 				}
-				if (EarClean_flag.sleep == 0)
+				if (app_flag.sleep == 0)
 					break;
 			}
 		}
@@ -359,15 +359,15 @@ void main(void)
 	{
 		MTF_watch_dog_feed();
 
-		if (EarClean_timer_flag._2ms)
+		if (app_timer_flag._2ms)
 		{
-			EarClean_timer_flag._2ms = 0;
+			app_timer_flag._2ms = 0;
 			adc_run();
 		}
 
-		if (EarClean_timer_flag._10ms)
+		if (app_timer_flag._10ms)
 		{
-			EarClean_timer_flag._10ms = 0;
+			app_timer_flag._10ms = 0;
 			// temp_deal();
 			battery_deal();
 			// motor_current_deal();
@@ -377,21 +377,21 @@ void main(void)
 			Led_display();
 		}
 
-		if (EarClean_timer_flag._100ms)
+		if (app_timer_flag._100ms)
 		{
-			EarClean_timer_flag._100ms = 0;
+			app_timer_flag._100ms = 0;
 
-			if(EarClean_flag.sys_ready==0)
+			if(app_flag.sys_ready==0)
 			{
 				if(++sys_read_delay>=10) //上电等待系统稳定
 				{
 					sys_read_delay = 0;
-					EarClean_flag.sys_ready = 1;
-					EarClean_flag.sleep = 0;
-					EarClean_flag.work = 1;
+					app_flag.sys_ready = 1;
+					app_flag.sleep = 0;
+					app_flag.work = 1;
 				}
 			}
-			EarClean_flag.sleep_updata = 0;
+			app_flag.sleep_updata = 0;
 		}
 		
 		sleep();

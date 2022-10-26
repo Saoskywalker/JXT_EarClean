@@ -3,7 +3,7 @@
 
 #include "types_plus.h"
 
-extern timer_flag_type EarClean_timer_flag;
-void EarClean_timer(void);
+extern timer_flag_type app_timer_flag;
+void app_timer(void);
 
 #endif

@@ -1,7 +1,7 @@
 #include "key_board.h"
 #include "gpio_board.h"
 #include "adc_board.h"
-#include "EarClean_global.h"
+#include "app_global.h"
 
 uint16_t key_input_res = 0;
 
@@ -11,7 +11,7 @@ void key_input_check_timer(void)   //定期运行输入检查
     static uint8_t i = 0, j = 0;
     static uint16_t k = 0, u = 0, l = 0;
 
-    if (EarClean_flag.sleep)
+    if (app_flag.sleep)
     {
         if (KEY_ADC_PIN() == 0) //按下
         {

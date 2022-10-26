@@ -238,11 +238,11 @@ void ACMP_IRQHandler(void)  interrupt ACMP_VECTOR
  **
  ** \return none
 ******************************************************************************/
-#include "EarClean_timer.h"
+#include "app_timer.h"
 void Timer3_IRQHandler(void)  interrupt TMR3_VECTOR 
 {
 	//100us
-	EarClean_timer();
+	app_timer();
 }
 /******************************************************************************
  ** \brief	 Timer 4 interrupt service function

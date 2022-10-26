@@ -1,5 +1,5 @@
 #include "display_define.h"
-#include "EarClean_global.h"
+#include "app_global.h"
 
 /*************************************************
  // 函数名称    : board_test
@@ -36,15 +36,15 @@ void Disp_All(void)
 *************************************************/
 static void dis_battery(void)
 {
-  if (EarClean_battery_level <= BATTERY_LV0)
+  if (app_battery_level <= BATTERY_LV0)
   {
     red_locate;
   }
-  else if (EarClean_battery_level <= BATTERY_LV1)
+  else if (app_battery_level <= BATTERY_LV1)
   {
     blue_locate;
   }
-  else if (EarClean_battery_level <= BATTERY_FULL)
+  else if (app_battery_level <= BATTERY_FULL)
   {
     green_locate;
   }
@@ -61,7 +61,7 @@ static void LedDsp_content(void)
   static uint8_t _dis_charge_500ms = 0, _dis_charge_cnt = 0;
   static uint8_t _dis_500ms_cnt = 0, _dis_500ms = 0, _flash_cnt = 0;
 
-  if (EarClean_battery_level <= BATTERY_LOSE)
+  if (app_battery_level <= BATTERY_LOSE)
   {
     _dis_500ms_cnt++;
     if (_dis_500ms_cnt >= 50)
@@ -78,7 +78,7 @@ static void LedDsp_content(void)
     _dis_500ms = 0;
   }
 
-  if(EarClean_flag.sys_ready==0)
+  if(app_flag.sys_ready==0)
   {
     Led_dis_All(); //上电准备时全显
     return;
@@ -86,14 +86,14 @@ static void LedDsp_content(void)
 
   Led_Clear_All(); //清除所有显示数据
 
-  if (EarClean_flag.drop_error)
+  if (app_flag.drop_error)
   {
     led1_locate;
     led2_locate;
     led3_locate;
   }
 
-  if (EarClean_flag.work)
+  if (app_flag.work)
   {
     if (app_work_mode == MODE_A)
     {
@@ -123,10 +123,10 @@ static void LedDsp_content(void)
     }
   }
 
-  if (EarClean_flag.usb_insert)
+  if (app_flag.usb_insert)
   {
     //充电时电量灯闪, 充满常亮
-    if (EarClean_flag.charge_full)
+    if (app_flag.charge_full)
     {
       dis_battery();
     }
@@ -148,9 +148,9 @@ static void LedDsp_content(void)
     _dis_charge_500ms = 0;
 
     //放电电量指示
-    if (EarClean_flag.work)
+    if (app_flag.work)
     {
-      if (EarClean_battery_level <= BATTERY_LOSE)
+      if (app_battery_level <= BATTERY_LOSE)
       {
         if (_dis_500ms) //低电闪烁
         {
@@ -163,31 +163,31 @@ static void LedDsp_content(void)
       }
     }
 
-    if (!EarClean_flag.work)
+    if (!app_flag.work)
     {
-      if (EarClean_battery_level <= BATTERY_LOSE)
+      if (app_battery_level <= BATTERY_LOSE)
       {
         if (_flash_cnt >= 6) //低电睡眠策略, 闪3次后睡眠
         {
-          EarClean_flag.disp_battery_level = 0;
+          app_flag.disp_battery_level = 0;
         }
       }
       else
       {
         // if (_dis_2s_cnt >= 4) //正常睡眠策略, 延时2s
         {
-          EarClean_flag.disp_battery_level = 0;
+          app_flag.disp_battery_level = 0;
         }
       }
     }
 
-    if (!EarClean_flag.disp_battery_level)
+    if (!app_flag.disp_battery_level)
     {
       _dis_500ms_cnt = 0;
       _flash_cnt = 0;
       // _dis_2s_cnt = 0;
       _dis_500ms = 0;
-      EarClean_flag.sleep = 1; //进入睡眠命令统一由此发出, 由sleep运行event_handle退出
+      app_flag.sleep = 1; //进入睡眠命令统一由此发出, 由sleep运行event_handle退出
     }
   }
 }

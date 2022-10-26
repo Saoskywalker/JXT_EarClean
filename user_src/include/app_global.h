@@ -1,5 +1,5 @@
-#ifndef _EARCLEAN_GLOBAL_H
-#define _EARCLEAN_GLOBAL_H
+#ifndef _APP_GLOBAL_H
+#define _APP_GLOBAL_H
 
 #include "types_base.h"
 
@@ -21,9 +21,9 @@ typedef struct
   uint8_t nc2 : 1;
   uint8_t nc3 : 1;
   uint8_t nc4 : 1;
-} EarClean_flag_type;
+} app_flag_type;
 
-extern EarClean_flag_type EarClean_flag;
+extern app_flag_type app_flag;
 
 typedef enum
 {
@@ -67,6 +67,6 @@ typedef enum
 };
 
 extern uint8_t light_mode, app_work_mode;
-extern uint8_t EarClean_battery_level;
+extern uint8_t app_battery_level;
 
 #endif
