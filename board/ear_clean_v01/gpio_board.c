@@ -49,9 +49,7 @@ void main_IO_init(void)
 	P26 = 0;
 
     //adc-key(正常设为ad按键, 睡眠时设为普通IO输入用于唤醒)
-    GPIO_SET_MUX_MODE(P30CFG, GPIO_MUX_GPIO); //设置为普通IO
-    GPIO_ENABLE_INPUT(P3TRIS, GPIO_PIN_0); //设置为输入(默认高阻)
-    // GPIO_ENABLE_UP(P3UP, GPIO_PIN_0); //开上拉电阻
+    GPIO_SET_MUX_MODE(P30CFG, GPIO_P30_MUX_AN22); //配置为模拟IO
 
     //stdby
     GPIO_SET_MUX_MODE(P31CFG, GPIO_MUX_GPIO); //设置为普通IO
@@ -66,8 +64,7 @@ void main_IO_init(void)
     /*
     (2)设置外部中断
     */
-    GPIO_SET_INT_MODE(P30EICFG, GPIO_INT_BOTH_EDGE); //设置为双沿中断模式
-    GPIO_EnableInt(GPIO3, GPIO_PIN_0_MSK);        //开启P30中断
+    GPIO_DisableInt(GPIO3, GPIO_PIN_0_MSK);        //关闭P30中断
 
     GPIO_SET_INT_MODE(P31EICFG, GPIO_INT_BOTH_EDGE); //设置为双沿中断模式
     GPIO_EnableInt(GPIO3, GPIO_PIN_1_MSK);        //开启P31中断
@@ -84,17 +81,25 @@ void main_IO_init(void)
 //睡眠前设置gpio
 void main_IO_exit(void)
 {
- MOTOR_PIN(0);
- EN_5V_PIN(0);
+    MOTOR_PIN(0);
+    EN_5V_PIN(0);
 
- LED_PWM_PIN(0);
+    LED_PWM_PIN(0);
 
 #ifndef DEBUG
- LED_G_PIN(0);
- LED_R_PIN(0);
- CHARGE_PROG_PIN(0);
+    LED_G_PIN(0);
+    LED_R_PIN(0);
+    CHARGE_PROG_PIN(0);
 #endif
 
- LED_COM_PIN(0);
- LED_B_PIN(0);
+    LED_COM_PIN(0);
+    LED_B_PIN(0);
+
+    // adc-key(正常设为ad按键, 睡眠时设为普通IO输入用于唤醒)
+    GPIO_SET_MUX_MODE(P30CFG, GPIO_MUX_GPIO); //设置为普通IO
+    GPIO_ENABLE_INPUT(P3TRIS, GPIO_PIN_0);    //设置为输入(默认高阻)
+    // GPIO_ENABLE_UP(P3UP, GPIO_PIN_0); //开上拉电阻
+
+    GPIO_SET_INT_MODE(P30EICFG, GPIO_INT_BOTH_EDGE); //设置为双沿中断模式
+    GPIO_EnableInt(GPIO3, GPIO_PIN_0_MSK);        //开启P30中断
 }

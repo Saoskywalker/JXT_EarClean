@@ -394,6 +394,6 @@ void main(void)
 			EarClean_flag.sleep_updata = 0;
 		}
 		
-		// sleep();
+		sleep();
 	}
 }

@@ -1,6 +1,7 @@
 #include "envent_define.h"
 #include "key_board.h"
 #include "EarClean_global.h"
+#include "gpio_board.h"
 
 uint16_t sys_envent = 0;
 
@@ -145,4 +146,9 @@ void event_handle(void)
         EarClean_flag.work = 0;
     if (EarClean_battery_level <= BATTERY_LOSE) //电池耗尽停止工作
         EarClean_flag.work = 0;  
+
+    if(EarClean_flag.work)
+        CHRG_CURRENT_SET_LOW();
+    else
+        CHRG_CURRENT_SET_HIGH();
 }
