@@ -6,17 +6,18 @@
 /*****************************
  * 应用对应的led显存功能定义
  * **************************/
-#define dig1_num LED_data_buf[0]
-#define dig2_num LED_data_buf[1]
-#define dig3_num LED_data_buf[2]
+#define LED_LIGHT_GRADUAL(x) LED_data_buf[1] = x
 
 #define Dsp_RESlocate(X, N) (LED_data_buf[X] &= ~(N))
 #define Dsp_locate(X, N) (LED_data_buf[X] |= (N))
 
-#define low_locate Dsp_locate(3, bit5)
-#define medium_locate Dsp_locate(3, bit2)
-#define high_locate Dsp_locate(3, bit1)
-#define pulse_locate Dsp_locate(3, bit3)
+#define led1_locate Dsp_locate(0, bit0)
+#define led2_locate Dsp_locate(0, bit1)
+#define led3_locate Dsp_locate(0, bit2)
+#define red_locate Dsp_locate(0, bit3)
+#define green_locate Dsp_locate(0, bit4)
+#define blue_locate Dsp_locate(0, bit5)
+
 /////////////////////////////////////
 
 //==============================================================================

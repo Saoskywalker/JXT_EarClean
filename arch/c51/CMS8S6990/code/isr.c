@@ -169,21 +169,7 @@ void P1EI_IRQHandler(void)  interrupt P1EI_VECTOR
  ******************************************************************************/
 void P2EI_IRQHandler(void)  interrupt P2EI_VECTOR 
 {
-	if(GPIO_GetIntFlag(GPIO2, GPIO_PIN_4))
-	{
-		// TEST_TOGGLE_PIN();
-		GPIO_ClearIntFlag(GPIO2, GPIO_PIN_4);
-	}
-	if(GPIO_GetIntFlag(GPIO2, GPIO_PIN_5))
-	{
-		// TEST_TOGGLE_PIN();
-		GPIO_ClearIntFlag(GPIO2, GPIO_PIN_5);
-	}
-	if(GPIO_GetIntFlag(GPIO2, GPIO_PIN_6))
-	{
-		// TEST_TOGGLE_PIN();
-		GPIO_ClearIntFlag(GPIO2, GPIO_PIN_6);
-	}
+
 }
 /******************************************************************************
  ** \brief	 GPIO 3 interrupt service function
@@ -194,7 +180,21 @@ void P2EI_IRQHandler(void)  interrupt P2EI_VECTOR
  ******************************************************************************/
 void P3EI_IRQHandler(void)  interrupt P3EI_VECTOR 
 {
-	;
+	if(GPIO_GetIntFlag(GPIO3, GPIO_PIN_0))
+	{
+		// TEST_TOGGLE_PIN();
+		GPIO_ClearIntFlag(GPIO3, GPIO_PIN_0);
+	}
+	if(GPIO_GetIntFlag(GPIO3, GPIO_PIN_1))
+	{
+		// TEST_TOGGLE_PIN();
+		GPIO_ClearIntFlag(GPIO3, GPIO_PIN_1);
+	}
+	if(GPIO_GetIntFlag(GPIO3, GPIO_PIN_2))
+	{
+		// TEST_TOGGLE_PIN();
+		GPIO_ClearIntFlag(GPIO3, GPIO_PIN_2);
+	}
 }
 
 /******************************************************************************

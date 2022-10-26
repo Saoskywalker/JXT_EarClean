@@ -2,6 +2,7 @@
 
 void MTF_watch_dog_init(void)
 {
+#ifndef DEBUG
 	/*
 	(1)喂狗，避免WDT时间太短，进入WDT复位
 	*/
@@ -20,6 +21,7 @@ void MTF_watch_dog_init(void)
 
 	// IRQ_SET_PRIORITY(IRQ_WDT, IRQ_PRIORITY_HIGH);
 	// IRQ_ALL_ENABLE();
+#endif
 	
-	
+	SYS_EnableWakeUp();				//使能STOP唤醒功能
 }

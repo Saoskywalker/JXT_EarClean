@@ -13,81 +13,54 @@
 #include "ad_table.h"
 
 EarClean_flag_type EarClean_flag = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint8_t EarClean_mode = MODE_A;
+uint8_t light_mode = LED_MODE_A, app_work_mode = MODE_A;
 uint8_t EarClean_battery_level = BATTERY_FULL;
-
-static uint8_t sleep_updata = 0; //用于标记在唤醒后一段时间内, 进行一定的唤醒处理
 
 /*****************************
  * 电机控制输出
  * ********************************/
 static void motor_function(void)
 {
-	static uint8_t pulse_count = 0, new_mode = 0;
+	static uint16_t pulse_count = 0;
+	static uint8_t new_mode = 0;
 
 	if (EarClean_flag.work)
 	{
+		if(new_mode!=app_work_mode)
+		{
+			new_mode = app_work_mode;
+			pulse_count = 0;
+		}
 		if (new_mode == MODE_A)
 		{
-			if(++pulse_count>=80)
+			if(++pulse_count>=6500)
 			{
 				pulse_count = 0;
-				if(new_mode!=EarClean_mode)
-				{
-					new_mode = EarClean_mode;
-					return;
-				}
 			}
-			if (pulse_count>=40)
-				PWM_MOTOR_SET_DUTY(PWM_DUTY_25);
+			if (pulse_count>=500)
+				PWM_MOTOR_SET_DUTY(PWM_DUTY_0);
 			else
 				PWM_MOTOR_SET_DUTY(PWM_DUTY_75);
 		}
 		else if (new_mode == MODE_B)
 		{
-			if(++pulse_count>=60)
+			if(++pulse_count>=4500)
 			{
 				pulse_count = 0;
-				if(new_mode!=EarClean_mode)
-				{
-					new_mode = EarClean_mode;
-					return;
-				}
 			}
-			if (pulse_count>=30)
-				PWM_MOTOR_SET_DUTY(PWM_DUTY_25);
-			else
-				PWM_MOTOR_SET_DUTY(PWM_DUTY_75);
-		}
-		else if (new_mode == MODE_C)
-		{
-			if(++pulse_count>=40)
-			{
-				pulse_count = 0;
-				if(new_mode!=EarClean_mode)
-				{
-					new_mode = EarClean_mode;
-					return;
-				}
-			}
-			if (pulse_count>=20)
-				PWM_MOTOR_SET_DUTY(PWM_DUTY_25);
+			if (pulse_count>=500)
+				PWM_MOTOR_SET_DUTY(PWM_DUTY_0);
 			else
 				PWM_MOTOR_SET_DUTY(PWM_DUTY_75);
 		}
 		else
 		{
-			if(++pulse_count>=20)
+			if(++pulse_count>=2500)
 			{
 				pulse_count = 0;
-				if(new_mode!=EarClean_mode)
-				{
-					new_mode = EarClean_mode;
-					return;
-				}
 			}
-			if (pulse_count>=10)
-				PWM_MOTOR_SET_DUTY(PWM_DUTY_25);
+			if (pulse_count>=500)
+				PWM_MOTOR_SET_DUTY(PWM_DUTY_0);
 			else
 				PWM_MOTOR_SET_DUTY(PWM_DUTY_75);
 		}
@@ -188,7 +161,7 @@ static uint16_t ADC_lookup(uint16_t value, uint16_t *ptr, uint16_t tab_leng)
  // 入口参数    : 无
  // 出口参数    : 无
 ***************************************************/
-ADC_PARA water_temp = {25, 77, 2048, AD_NORMAL};
+/* ADC_PARA water_temp = {25, 77, 2048, AD_NORMAL};
 static void temp_deal(void)
 {
 	static uint8_t Temp_Err_Cont = 0;
@@ -234,31 +207,30 @@ static void temp_deal(void)
         water_temp.value = C_F((int8_t)water_temp.C_value);
 	}
 }
-
+ */
 static void battery_deal(void)
 {
-	// Vref=3, 分压为1/2, Vin = 2*AD*3/4096+0.5(四舍五入), AD = (Vin)*4096/6+0.5(四舍五入)
-	// Vin = ((ADC_BATTERY_VALUE()>>4)*300+256)/1280
+	// Vref=2.4, 分压为1/2, Vin = 2*AD*2.4/4096+0.5(四舍五入), AD = (Vin)*4096/4.8+0.5(四舍五入)
 
-	if (EarClean_flag.sys_ready == 0 || sleep_updata)
+	if (EarClean_flag.sys_ready == 0 || EarClean_flag.sleep_updata)
 	{
 		if (ADC_BATTERY_VALUE() >= 4000) //voltage over high
 		{
 			EarClean_battery_level = BATTERY_HIGH;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2662) // 3.9V
+		else if (ADC_BATTERY_VALUE() >= 3328) // 3.9V
 		{
 			EarClean_battery_level = BATTERY_FULL;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2560) // 3.75V
+		else if (ADC_BATTERY_VALUE() >= 3157) // 3.7V
 		{
 			EarClean_battery_level = BATTERY_LV2;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2389) // 3.5V
+		else if (ADC_BATTERY_VALUE() >= 2987) // 3.5V
 		{
 			EarClean_battery_level = BATTERY_LV1;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2219) // 3.25V
+		else if (ADC_BATTERY_VALUE() >= 2645) // 3.1V
 		{
 			EarClean_battery_level = BATTERY_LV0;
 		}
@@ -276,19 +248,19 @@ static void battery_deal(void)
 		{
 			EarClean_battery_level = BATTERY_HIGH;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2662) // 3.9V
+		else if (ADC_BATTERY_VALUE() >= 3328) // 3.9V
 		{
 			EarClean_battery_level = BATTERY_FULL;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2560 && EarClean_battery_level <= BATTERY_LV2) // 3.75V
+		else if (ADC_BATTERY_VALUE() >= 3157 && EarClean_battery_level <= BATTERY_LV2) // 3.7V
 		{
 			EarClean_battery_level = BATTERY_LV2;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2389 && EarClean_battery_level <= BATTERY_LV1) // 3.5V
+		else if (ADC_BATTERY_VALUE() >= 2987 && EarClean_battery_level <= BATTERY_LV1) // 3.5V
 		{
 			EarClean_battery_level = BATTERY_LV1;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2219 && EarClean_battery_level <= BATTERY_LV0) // 3.25V
+		else if (ADC_BATTERY_VALUE() >= 2645 && EarClean_battery_level <= BATTERY_LV0) // 3.1V
 		{
 			EarClean_battery_level = BATTERY_LV0;
 		}
@@ -300,19 +272,19 @@ static void battery_deal(void)
 		{
 			EarClean_battery_level = BATTERY_HIGH;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2662 && EarClean_battery_level >= BATTERY_FULL) // 3.9V
+		else if (ADC_BATTERY_VALUE() >= 3328 && EarClean_battery_level >= BATTERY_FULL) // 3.9V
 		{
 			EarClean_battery_level = BATTERY_FULL;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2560 && EarClean_battery_level >= BATTERY_LV2) // 3.75V
+		else if (ADC_BATTERY_VALUE() >= 3157 && EarClean_battery_level >= BATTERY_LV2) // 3.7V
 		{
 			EarClean_battery_level = BATTERY_LV2;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2389 && EarClean_battery_level >= BATTERY_LV1) // 3.5V
+		else if (ADC_BATTERY_VALUE() >= 2987 && EarClean_battery_level >= BATTERY_LV1) // 3.5V
 		{
 			EarClean_battery_level = BATTERY_LV1;
 		}
-		else if (ADC_BATTERY_VALUE() >= 2219 && EarClean_battery_level >= BATTERY_LV0) // 3.25V
+		else if (ADC_BATTERY_VALUE() >= 2645 && EarClean_battery_level >= BATTERY_LV0) // 3.1V
 		{
 			EarClean_battery_level = BATTERY_LV0;
 		}
@@ -342,20 +314,17 @@ static void sleep(void)
 	if(EarClean_flag.sleep)
 	{
 		MM_adc1_suspend();
-		PWM_MOTOR_SUSPEND();
+		PWM_SUSPEND();
 		main_IO_exit();
 
 		while (EarClean_flag.sleep)
 		{
-			//注: 此IC进入休眠后LVR关闭
-			SYS_EnterStop(); //进入休眠模式
+			MTF_sys_stop(); //进入休眠模式
 			check_count = 0;
 			while (check_count < 300)
 			{
-#ifndef DEBUG
 				MTF_watch_dog_feed();
-#endif
-				sleep_updata = 1;
+				EarClean_flag.sleep_updata = 1;
 				if (EarClean_timer_flag._10ms)
 				{
 					EarClean_timer_flag._10ms = 0;
@@ -369,7 +338,7 @@ static void sleep(void)
 		}
 		
 		main_IO_init();
-		PWM_MOTOR_START();
+		PWM_START();
 		MM_adc1_start();
 	}
 }
@@ -380,20 +349,15 @@ void main(void)
 	
 	main_IO_init();
 	PWM_INIT();
-	ADC_INIT();
+	MM_adc1_init();
 	// UART_INIT();
 	MTF_timer_init_handle();
-#ifndef DEBUG
 	MTF_watch_dog_init();
-#endif
-	SYS_EnableWakeUp();				//使能STOP唤醒功能
 	// printf("welcome.............\r\n");
 
 	while (1)
 	{
-#ifndef DEBUG
 		MTF_watch_dog_feed();
-#endif
 
 		if (EarClean_timer_flag._2ms)
 		{
@@ -404,9 +368,9 @@ void main(void)
 		if (EarClean_timer_flag._10ms)
 		{
 			EarClean_timer_flag._10ms = 0;
-			temp_deal();
+			// temp_deal();
 			battery_deal();
-			motor_current_deal();
+			// motor_current_deal();
 			event_produce();
 			event_handle();
 			motor_function();
@@ -427,9 +391,9 @@ void main(void)
 					EarClean_flag.work = 1;
 				}
 			}
-			sleep_updata = 0;
+			EarClean_flag.sleep_updata = 0;
 		}
 		
-		sleep();
+		// sleep();
 	}
 }

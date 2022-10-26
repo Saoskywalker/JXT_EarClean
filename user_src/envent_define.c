@@ -15,11 +15,11 @@ void event_produce(void)
 
     key = key_get_result();
 
-    if ((key & bit1) && !(key_old & bit1)) //单击模式键
-        sys_envent |= MODE_KEY;
+    if ((key & bit0) && !(key_old & bit0)) //单击模式键
+        sys_envent |= LED_MODE_KEY;
 
-    if ((key & bit0) && !(key_old & bit0)) //单击电源键
-        sys_envent |= DIS_BATTERY;
+    if ((key & bit1) && !(key_old & bit1)) //单击电源键
+        sys_envent |= POWER_KEY;
 
     if ((key & bit2)) //插入充电线
         sys_envent |= USB_INSERT;
@@ -29,12 +29,17 @@ void event_produce(void)
     if ((key & bit3)) //充满电
         sys_envent |= CHANGE_FULL;
 
-    if (key & bit1) //长按模式键
+    if ((key & bit4)) //倾倒
+        sys_envent |= DROP_EVENT;
+    else
+        sys_envent |= NO_DROP_EVENT;
+
+    if (key & bit0) //长按模式键
     {
         if (++mode_key_long_count >= 200) // 2s
         {
             mode_key_long_count = 0;
-            sys_envent |= CHANGE_TEMP_UNIT;
+            // sys_envent |= CHANGE_TEMP_UNIT;
         }
     }
     else
@@ -42,12 +47,12 @@ void event_produce(void)
         mode_key_long_count = 0;
     }
 
-    if (key & bit0) //电源键长按
+    if (key & bit1) //电源键长按
     {
         if (++power_key_long_count >= 200) // 2s
         {
             power_key_long_count = 0;
-            sys_envent |= POWER_KEY;
+            // sys_envent |= POWER_KEY;
         }
     }
     else
@@ -72,39 +77,44 @@ void event_handle(void)
     {   
         switch (sys_envent & temp) //注意事件顺序
         {
-        case MODE_KEY:
+        case LED_MODE_KEY:
             if(EarClean_flag.work)
             {
-                if (++EarClean_mode > MODE_D)
-                    EarClean_mode = MODE_A;
+                if (++light_mode > LED_MODE_C)
+                    light_mode = LED_MODE_A;
             }
             break;
         case POWER_KEY:
-            if (EarClean_flag.usb_insert == 0)
+            // if (EarClean_flag.usb_insert == 0)
             {
+                EarClean_flag.drop_error = 0;
+                EarClean_flag.sleep = 0;
+                EarClean_flag.disp_battery_level = 1;
                 if (EarClean_flag.work)
                 {
-                    EarClean_flag.work = 0;
+                    if (++app_work_mode > MODE_C)
+                    {
+                        app_work_mode = MODE_A;
+                        EarClean_flag.work = 0;
+                    }
                 }
                 else
                 {
                     if (EarClean_battery_level > BATTERY_LOSE)
                     {
                         EarClean_flag.work = 1;
-                        EarClean_flag.sleep = 0;
                     }
                 }
-                EarClean_flag.disp_battery_level = 0; //取消电量显示
             }
             break;
         case USB_INSERT:
             EarClean_flag.sleep = 0;
-            EarClean_flag.charge_full = 0;
             EarClean_flag.usb_insert = 1;
-            EarClean_flag.work = 0;
+            // EarClean_flag.work = 0;
             break;
         case USB_NO_INSERT:
             EarClean_flag.usb_insert = 0;
+            EarClean_flag.charge_full = 0;
             break;
         case DIS_BATTERY:
             EarClean_flag.sleep = 0;
@@ -115,6 +125,13 @@ void event_handle(void)
             break;
         case CHANGE_FULL:
             EarClean_flag.charge_full = 1;
+            break;
+        case DROP_EVENT:
+            EarClean_flag.drop_error = 1;
+            EarClean_flag.work = 0; //倾倒停止工作
+            break;
+        case NO_DROP_EVENT:
+            EarClean_flag.drop_error = 0;
             break;
         default:
             break;
@@ -127,5 +144,5 @@ void event_handle(void)
     if(EarClean_flag.current_error) //电流错误
         EarClean_flag.work = 0;
     if (EarClean_battery_level <= BATTERY_LOSE) //电池耗尽停止工作
-        EarClean_flag.work = 0;
+        EarClean_flag.work = 0;  
 }

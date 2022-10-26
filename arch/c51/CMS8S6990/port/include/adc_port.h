@@ -10,10 +10,10 @@
 #define MTF_ADC_VREF_2P4V ADC_VREF_2P4V /*Vref =2.4v*/
 #define MTF_ADC_VREF_3V ADC_VREF_3V   /*Vref =3v*/
 
-//ADN channel define
+//ADC channel define
 #define MTF_ADC_CH4 ADC_CH_4
 #define MTF_ADC_CH5 ADC_CH_5
-#define MTF_ADC_CH14 ADC_CH_14
+#define MTF_ADC_CH22 ADC_CH_22
 
 uint8_t MM_adc1_init(void);
 uint8_t MM_adc1_exit(void);

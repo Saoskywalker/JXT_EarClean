@@ -2,7 +2,7 @@
 
 uint8_t MM_adc1_init(void)
 {
-    GPIO_SET_MUX_MODE(P32CFG, GPIO_P32_MUX_AN14); //配置为模拟IO
+    GPIO_SET_MUX_MODE(P30CFG, GPIO_P30_MUX_AN22); //配置为模拟IO
     GPIO_SET_MUX_MODE(P05CFG, GPIO_P05_MUX_AN5); //配置为模拟IO
     GPIO_SET_MUX_MODE(P04CFG, GPIO_P04_MUX_AN4); //配置为模拟IO
 
@@ -10,7 +10,7 @@ uint8_t MM_adc1_init(void)
     ADC_ConfigRunMode(ADC_CLK_DIV_64, ADC_RESULT_LEFT); //设置ADC时钟为系统时钟的64分频，ADC结果为左对齐
 
     //设置ADC转换通道
-    ADC_EnableChannel(ADC_CH_14); //切换通道后建议500ns后开采样
+    ADC_EnableChannel(GPIO_P05_MUX_AN5); //切换通道后建议500ns后开采样
 
     //设置参考电压
     ADC_DisableLDO();

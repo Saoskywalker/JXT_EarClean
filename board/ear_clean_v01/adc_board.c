@@ -3,9 +3,44 @@
 
 // #define MTF_ADC_debug(...) printf(__VA_ARGS__)
 
+#define window_size 8
+typedef struct
+{
+    unsigned char data_num;
+    unsigned char data_full;
+    uint16_t buffer[window_size];
+} filter_type;
+
+uint16_t sliding_middle_filter(uint16_t value, filter_type *prt)
+{
+    uint16_t output = 0;
+    unsigned char i;
+
+    if (prt->data_full < window_size) //不满窗口，先填充
+    {
+        prt->buffer[prt->data_full] = value;
+        prt->data_full++;
+        output = value; //返回相同的值
+    }
+    else
+    {
+        prt->buffer[prt->data_num] = value;
+        if (++(prt->data_num) >= window_size)
+            prt->data_num = 0;
+
+        for (i = 0; i < window_size; i++)
+            output += prt->buffer[i];
+
+        output = output>>3; //x/8
+    }
+
+    return output;
+}
+
 uint16_t _adc_value[ADC_CHANNEL_TOTAL] = {2047, 2047, 2047};
 void adc_run(void)
 {
+    
     static uint16_t adc_result = 20000;
     static uint8_t sample_count = 255, channel_count = 0, _reject_count = 0;
 
@@ -30,20 +65,20 @@ void adc_run(void)
         }
 
         //为保证结果准确度, 切换通道后建议500ns后开采样
-        if (channel_count == 0) // battery
+        if (channel_count == 0)
         {
-            MM_adc1_set_ref(MTF_ADC_VREF_3V);
-            MM_adc1_set_channel(MTF_ADC_CH5);
+            MM_adc1_set_ref(MTF_ADC_VREF_2P4V);
+            MM_adc1_set_channel(MTF_ADC_BATTERY);
         }
-        else if (channel_count == 1) // motor current
+        else if (channel_count == 1)
         {
-            MM_adc1_set_ref(MTF_ADC_VREF_3V);
-            MM_adc1_set_channel(MTF_ADC_CH4);
+            MM_adc1_set_ref(MTF_ADC_VREF_2P4V);
+            MM_adc1_set_channel(MTF_ADC_MOTOR_CURRENT);
         }
-        else // NTC
+        else
         {
             MM_adc1_set_ref(MTF_ADC_VREF_VDD);
-            MM_adc1_set_channel(MTF_ADC_CH14);
+            MM_adc1_set_channel(MTF_ADC_KEY);
         }
     }
     else

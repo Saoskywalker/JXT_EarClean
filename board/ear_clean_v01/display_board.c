@@ -19,92 +19,8 @@ uint8_t Led_Display_init(void)
 ***************************************************/
 uint8_t Led_Display_exit(void)
 {
-  COMDIG1_PIN_OFF;
-  COMDIG2_PIN_OFF;
-  COMDIG3_PIN_OFF;
-  COMDIG4_PIN_OFF;
+  LED_1TO4_ALL_OFF();
   return 0;
-}
-
-/*************************************************
- // 函数名称    : SEGNum_Scan
- // 功能描述    :
- // 入口参数    : uint8_t data    uint8_t com--8bit每段
- // 出口参数    : 无
-***************************************************/
-static void SEGNum_out(uint8_t _data_buf)
-{
-  if (_data_buf & bit0)
-  {
-    SEG_A_PIN_ON;
-  }
-  else
-  {
-    SEG_A_PIN_OFF;
-  }
-
-  if (_data_buf & bit1)
-  {
-    SEG_B_PIN_ON;
-  }
-  else
-  {
-    SEG_B_PIN_OFF;
-  }
-
-  if (_data_buf & bit2)
-  {
-    SEG_C_PIN_ON;
-  }
-  else
-  {
-    SEG_C_PIN_OFF;
-  }
-
-  if (_data_buf & bit3)
-  {
-    SEG_D_PIN_ON;
-  }
-  else
-  {
-    SEG_D_PIN_OFF;
-  }
-
-  if (_data_buf & bit4)
-  {
-    SEG_E_PIN_ON;
-  }
-  else
-  {
-    SEG_E_PIN_OFF;
-  }
-
-  if (_data_buf & bit5)
-  {
-    SEG_F_PIN_ON;
-  }
-  else
-  {
-    SEG_F_PIN_OFF;
-  }
-
-  if (_data_buf & bit6)
-  {
-    SEG_G_PIN_ON;
-  }
-  else
-  {
-    SEG_G_PIN_OFF;
-  }
-
-  if (_data_buf & bit7)
-  {
-    SEG_H_PIN_ON;
-  }
-  else
-  {
-    SEG_H_PIN_OFF;
-  }
 }
 
 /*************************************************
@@ -214,7 +130,7 @@ void Led_Dis_Update(void)
 void Led_Clear_All(void)
 {
   uint8_t i;
-  for (i = 0; i < LED_COM_TOTAL; i++)
+  for (i = 0; i < LED_DATA_SIZE; i++)
   {
     LED_data_buf[i] = 0;
   }
@@ -229,7 +145,7 @@ void Led_Clear_All(void)
 void Led_dis_All(void)
 {
   uint8_t i;
-  for (i = 0; i < LED_COM_TOTAL; i++)
+  for (i = 0; i < LED_DATA_SIZE; i++)
   {
     LED_data_buf[i] = 0XFF;
   }
@@ -241,23 +157,24 @@ void Led_dis_All(void)
  // 入口参数    : 无
  // 出口参数    : 无
 ***************************************************/
-#define LED_SCAN_INTERVAL 2  //通道和显示更新间隔
-#define LED_LIGHT_LEVEL 2 //亮度等级
-uint8_t LED_data[LED_COM_TOTAL] = {0}; //数码管显示输出缓存
-uint8_t LED_data_buf[LED_COM_TOTAL] = {0}; //LED显示data
+#define LED_SCAN_TOTAL 6 //通道数量
+#define LED_SCAN_INTERVAL 1  //通道和显示更新间隔
+#define LED_LIGHT_LEVEL 1 //亮度等级
+uint8_t LED_data[LED_DATA_SIZE] = {0}; //数码管显示输出缓存
+uint8_t LED_data_buf[LED_DATA_SIZE] = {0}; //LED显示data
+#include "pwm_board.h"
 void Led_Scan(void)
 {
   static uint8_t led_scan_time = 0;        // LED扫描时间
   static uint8_t led_scan_position = 0;    // LED扫描位
   static uint8_t led_light_level_cnt = 0;
 
+  PWM_LED_SET_DUTY((uint16_t)LED_data[1]<<1); //占空比转换 x*2
+
   if (++led_light_level_cnt >= LED_LIGHT_LEVEL)
   {
-    //关COM口
-    COMDIG1_PIN_OFF;
-    COMDIG2_PIN_OFF;
-    COMDIG3_PIN_OFF;
-    COMDIG4_PIN_OFF;
+    //全关
+    LED_1TO4_ALL_OFF();
   }
   
   if (++led_scan_time < LED_SCAN_INTERVAL)
@@ -267,30 +184,38 @@ void Led_Scan(void)
   led_scan_time = 0;
   led_light_level_cnt = 0;
 
-  if (led_scan_position == 0) // COM1
+  if (led_scan_position == 0)
   {
-    // LED_out(0X00);
-    SEGNum_out(LED_data[led_scan_position]);
-    COMDIG1_PIN_ON; //开COM口
+    if (LED_data[0]&bit0)
+      LED1_ON();
   }
-  else if (led_scan_position == 1) // COM2
+  else if (led_scan_position == 1)
   {
-    SEGNum_out(LED_data[led_scan_position]);
-    COMDIG2_PIN_ON; //开COM口
+    if (LED_data[0]&bit1)
+      LED2_ON();
   }
-  else if (led_scan_position == 2) // COM3
+  else if (led_scan_position == 2)
   {
-    SEGNum_out(LED_data[led_scan_position]);
-    COMDIG3_PIN_ON; //开COM口
+    if (LED_data[0]&bit2)
+      LED3_ON();
   }
-  else if (led_scan_position == 3) // COM4
+  else if (led_scan_position == 3)
   {
-    // LED_out(LED_data[led_scan_position]);
-    SEGNum_out(LED_data[led_scan_position]);
-    COMDIG4_PIN_ON; //开COM口
+    if (LED_data[0]&bit3)
+      LED4_R_ON();
+  }
+  else if (led_scan_position == 4)
+  {
+    if (LED_data[0]&bit4)
+      LED4_G_ON();
+  }
+  else if (led_scan_position == 5)
+  {
+    if (LED_data[0]&bit5)
+      LED4_B_ON();
   }
 
-  if (++led_scan_position >= LED_COM_TOTAL)
+  if (++led_scan_position >= LED_SCAN_TOTAL)
   {
     led_scan_position = 0;
   }
