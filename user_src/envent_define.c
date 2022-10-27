@@ -24,16 +24,12 @@ void event_produce(void)
 
     if ((key & bit2)) //插入充电线
         sys_envent |= USB_INSERT;
-    else
-        sys_envent |= USB_NO_INSERT;
 
     if ((key & bit3)) //充满电
         sys_envent |= CHANGE_FULL;
 
     if ((key & bit4)) //倾倒
         sys_envent |= DROP_EVENT;
-    else
-        sys_envent |= NO_DROP_EVENT;
 
     if (key & bit0) //长按模式键
     {
@@ -64,6 +60,12 @@ void event_produce(void)
     key_old = key;
 }
 
+static void work_off(void)
+{
+    app_work_mode = MODE_A;
+    app_flag.work = 0;
+}
+
 //-----------------------------------------------------------
 //	事件处理
 //-----------------------------------------------------------
@@ -72,67 +74,88 @@ void event_handle(void)
     uint16_t temp = 1;
 
     if (app_flag.sys_ready==0)
+    {
+        sys_envent = 0;
         return;
+    }
 
     while (temp)
     {   
-        switch (sys_envent & temp) //注意事件顺序
+        switch (temp) //注意事件顺序
         {
         case LED_MODE_KEY:
-            if(app_flag.work)
+            if (sys_envent & temp)
             {
-                if (++light_mode > LED_MODE_C)
-                    light_mode = LED_MODE_A;
+                if(app_flag.work)
+                {
+                    if (++light_mode > LED_MODE_C)
+                        light_mode = LED_MODE_A;
+                }
             }
             break;
         case POWER_KEY:
-            // if (app_flag.usb_insert == 0)
+            if (sys_envent & temp)
             {
-                app_flag.drop_error = 0;
-                app_flag.sleep = 0;
-                app_flag.disp_battery_level = 1;
-                if (app_flag.work)
+                // if (app_flag.usb_insert == 0)
                 {
-                    if (++app_work_mode > MODE_C)
+                    app_flag.drop_error = 0;
+                    app_flag.sleep = 0;
+                    app_flag.disp_battery_level = 1;
+                    if (app_flag.work)
                     {
-                        app_work_mode = MODE_A;
-                        app_flag.work = 0;
+                        if (++app_work_mode > MODE_C)
+                        {
+                            work_off();
+                        }
                     }
-                }
-                else
-                {
-                    if (app_battery_level > BATTERY_LOSE)
+                    else
                     {
-                        app_flag.work = 1;
+                        if (app_battery_level > BATTERY_LOSE)
+                        {
+                            app_flag.work = 1;
+                        }
                     }
                 }
             }
             break;
         case USB_INSERT:
-            app_flag.sleep = 0;
-            app_flag.usb_insert = 1;
-            // app_flag.work = 0;
-            break;
-        case USB_NO_INSERT:
-            app_flag.usb_insert = 0;
-            app_flag.charge_full = 0;
+            if (sys_envent & temp)
+            {
+                app_flag.sleep = 0;
+                app_flag.usb_insert = 1;
+                // work_off();
+            }
+            else
+            {
+                app_flag.usb_insert = 0;
+                app_flag.charge_full = 0;
+            }
             break;
         case DIS_BATTERY:
-            app_flag.sleep = 0;
-            app_flag.disp_battery_level = 1;
+            if (sys_envent & temp)
+            {
+                app_flag.sleep = 0;
+                app_flag.disp_battery_level = 1;
+            }
             break;
         case CHANGE_TEMP_UNIT:
-            app_flag.temp_unit_C = !app_flag.temp_unit_C;
+            if (sys_envent & temp)
+                app_flag.temp_unit_C = !app_flag.temp_unit_C;
             break;
         case CHANGE_FULL:
-            app_flag.charge_full = 1;
+            if (sys_envent & temp)
+                app_flag.charge_full = 1;
             break;
         case DROP_EVENT:
-            app_flag.drop_error = 1;
-            app_flag.work = 0; //倾倒停止工作
-            break;
-        case NO_DROP_EVENT:
-            app_flag.drop_error = 0;
+            if (sys_envent & temp)
+            {
+                app_flag.drop_error = 1;
+                work_off(); //倾倒停止工作
+            }
+            else
+            {
+                app_flag.drop_error = 0;
+            }
             break;
         default:
             break;
@@ -143,9 +166,9 @@ void event_handle(void)
 
     //error handle
     if(app_flag.current_error) //电流错误
-        app_flag.work = 0;
+        work_off();
     if (app_battery_level <= BATTERY_LOSE) //电池耗尽停止工作
-        app_flag.work = 0;  
+        work_off();  
 
     if(app_flag.work)
         CHRG_CURRENT_SET_LOW();

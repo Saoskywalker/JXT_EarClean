@@ -2,7 +2,7 @@
 // #include "stdio.h"
 
 // #define MTF_ADC_debug(...) printf(__VA_ARGS__)
-
+/* 
 #define window_size 8
 typedef struct
 {
@@ -10,7 +10,7 @@ typedef struct
     unsigned char data_full;
     uint16_t buffer[window_size];
 } filter_type;
-
+static filter_type battery_buf = {0, 0, 0, 0, 0, 0, 0}, current_buf = {0, 0, 0, 0, 0, 0, 0}, key_buf = {0, 0, 0, 0, 0, 0, 0};
 uint16_t sliding_middle_filter(uint16_t value, filter_type *prt)
 {
     uint16_t output = 0;
@@ -36,7 +36,7 @@ uint16_t sliding_middle_filter(uint16_t value, filter_type *prt)
 
     return output;
 }
-
+ */
 uint16_t _adc_value[ADC_CHANNEL_TOTAL] = {2047, 2047, 2047};
 void adc_run(void)
 {
