@@ -1,4 +1,7 @@
 #include "display_board.h"
+#include "pwm_board.h"
+
+static uint8_t dis_start = 0;
 
 /*************************************************
  // 函数名称    : uint8_t Led_Display_init(void)
@@ -8,6 +11,7 @@
 ***************************************************/
 uint8_t Led_Display_init(void)
 {
+  dis_start = 1;
   return 0;
 }
 
@@ -19,7 +23,12 @@ uint8_t Led_Display_init(void)
 ***************************************************/
 uint8_t Led_Display_exit(void)
 {
-  LED_1TO4_ALL_OFF();
+  dis_start = 0;
+  PWM_LED_SET_DUTY(0);
+  LED_G_PIN(0);
+  LED_R_PIN(0);
+  LED_COM_PIN(0);
+  LED_B_PIN(0);
   return 0;
 }
 
@@ -162,12 +171,14 @@ void Led_dis_All(void)
 #define LED_LIGHT_LEVEL 1 //亮度等级
 uint8_t LED_data[LED_DATA_SIZE] = {0}; //数码管显示输出缓存
 uint8_t LED_data_buf[LED_DATA_SIZE] = {0}; //LED显示data
-#include "pwm_board.h"
 void Led_Scan(void)
 {
   static uint8_t led_scan_time = 0;        // LED扫描时间
   static uint8_t led_scan_position = 0;    // LED扫描位
   static uint8_t led_light_level_cnt = 0;
+
+  if(!dis_start)
+    return;
 
   PWM_LED_SET_DUTY((uint16_t)LED_data[1]<<1); //占空比转换 x*2
 

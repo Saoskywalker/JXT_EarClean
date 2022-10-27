@@ -91,6 +91,7 @@ static void LedDsp_content(void)
     led1_locate;
     led2_locate;
     led3_locate;
+    return;
   }
 
   if (app_flag.work)
@@ -183,6 +184,7 @@ static void LedDsp_content(void)
 
     if (!app_flag.disp_battery_level)
     {
+      Led_Clear_All(); 
       _dis_500ms_cnt = 0;
       _flash_cnt = 0;
       // _dis_2s_cnt = 0;

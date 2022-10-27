@@ -1,5 +1,6 @@
 #include "gpio_board.h"
 
+//非MCU外设控制IO设置
 void main_IO_init(void)
 {
     #ifndef DEBUG
@@ -78,22 +79,10 @@ void main_IO_init(void)
     IRQ_SET_PRIORITY(IRQ_P3, IRQ_PRIORITY_LOW);
 }
 
-//睡眠前设置gpio
+//睡眠前非模块gpio设置
 void main_IO_exit(void)
 {
-    MOTOR_PIN(0);
     EN_5V_PIN(0);
-
-    LED_PWM_PIN(0);
-
-#ifndef DEBUG
-    LED_G_PIN(0);
-    LED_R_PIN(0);
-    CHARGE_PROG_PIN(0);
-#endif
-
-    LED_COM_PIN(0);
-    LED_B_PIN(0);
 
     // adc-key(正常设为ad按键, 睡眠时设为普通IO输入用于唤醒)
     GPIO_SET_MUX_MODE(P30CFG, GPIO_MUX_GPIO); //设置为普通IO

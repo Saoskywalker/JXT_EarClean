@@ -313,6 +313,7 @@ static void sleep(void)
 	
 	if(app_flag.sleep)
 	{
+		Led_Display_exit();
 		MM_adc1_suspend();
 		PWM_SUSPEND();
 		main_IO_exit();
@@ -340,18 +341,21 @@ static void sleep(void)
 		main_IO_init();
 		PWM_START();
 		MM_adc1_start();
+		Led_Display_init();
 	}
 }
 
 void main(void)
 {
-	uint8_t sys_read_delay = 0;
+	uint8_t sys_read_delay = 0, sleep_updata_delay = 0;
 	
 	main_IO_init();
 	PWM_INIT();
 	MM_adc1_init();
 	// UART_INIT();
 	MTF_timer_init_handle();
+	Led_Display_init();
+
 	MTF_watch_dog_init();
 	// printf("welcome.............\r\n");
 
@@ -371,10 +375,13 @@ void main(void)
 			// temp_deal();
 			battery_deal();
 			// motor_current_deal();
-			event_produce();
-			event_handle();
-			motor_function();
-			Led_display();
+			if (app_flag.sleep_updata == 0)
+			{
+				event_produce();
+				event_handle();
+				motor_function();
+				Led_display();
+			}
 		}
 
 		if (app_timer_flag._100ms)
@@ -387,11 +394,20 @@ void main(void)
 				{
 					sys_read_delay = 0;
 					app_flag.sys_ready = 1;
+					app_flag.disp_battery_level = 1;
 					app_flag.sleep = 0;
-					app_flag.work = 1;
+					app_flag.work = 1; //上电工作
 				}
 			}
-			app_flag.sleep_updata = 0;
+
+			if(app_flag.sleep_updata)
+			{
+				if(++sleep_updata_delay>=2)
+				{
+					sleep_updata_delay = 0;
+					app_flag.sleep_updata = 0;
+				}
+			}
 		}
 		
 		sleep();
