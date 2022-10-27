@@ -42,7 +42,7 @@ void main_IO_init(void)
     //SW-G
     GPIO_SET_MUX_MODE(P24CFG, GPIO_MUX_GPIO); //设置为普通IO
     GPIO_ENABLE_INPUT(P2TRIS, GPIO_PIN_4); //设置为输入(默认高阻)
-    GPIO_ENABLE_UP(P2UP, GPIO_PIN_4); //开上拉电阻
+    // GPIO_ENABLE_UP(P2UP, GPIO_PIN_4); //开上拉电阻
 
     //led-b
     GPIO_SET_MUX_MODE(P26CFG, GPIO_MUX_GPIO); //设置为普通IO

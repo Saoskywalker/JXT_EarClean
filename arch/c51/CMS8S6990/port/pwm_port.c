@@ -84,8 +84,10 @@ void MM_pwm_start(void)
 void MM_pwm_suspend(void)
 {
     GPIO_SET_MUX_MODE(P03CFG, GPIO_MUX_GPIO); //设置为普通IO
+    GPIO_ENABLE_OUTPUT(P0TRIS, GPIO_PIN_3);
     MOTOR_PIN(0);
     GPIO_SET_MUX_MODE(P01CFG, GPIO_MUX_GPIO); //设置为普通IO
+    GPIO_ENABLE_OUTPUT(P0TRIS, GPIO_PIN_1);
     LED_PWM_PIN(0);
     
     EPWM_DisableOutput(EPWM_CH_0_MSK | EPWM_CH_1_MSK); //停止PWM输出
