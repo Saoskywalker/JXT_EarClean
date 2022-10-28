@@ -59,7 +59,7 @@ static void dis_battery(void)
 static void LedDsp_content(void)
 {
   static uint8_t _dis_charge_500ms = 0, _dis_charge_cnt = 0;
-  static uint8_t _dis_500ms_cnt = 0, _dis_500ms = 0, _flash_cnt = 0;
+  static uint8_t _dis_500ms_cnt = 0, _dis_500ms = 0, _flash_cnt = 0, _dis_400ms_cnt = 0;
 
   if (app_battery_level <= BATTERY_LOSE)
   {
@@ -149,19 +149,16 @@ static void LedDsp_content(void)
     _dis_charge_500ms = 0;
 
     //放电电量指示
-    if (app_flag.work)
+    if (app_battery_level <= BATTERY_LOSE)
     {
-      if (app_battery_level <= BATTERY_LOSE)
+      if (_dis_500ms) //低电闪烁
       {
-        if (_dis_500ms) //低电闪烁
-        {
-          red_locate;
-        }
+        red_locate;
       }
-      else
-      {
-        dis_battery();
-      }
+    }
+    else
+    {
+      dis_battery();
     }
 
     if (!app_flag.work)
@@ -172,11 +169,13 @@ static void LedDsp_content(void)
         {
           app_flag.disp_battery_level = 0;
         }
+        _dis_400ms_cnt = 0;
       }
       else
       {
-        // if (_dis_2s_cnt >= 4) //正常睡眠策略, 延时2s
+        if (++_dis_400ms_cnt >= 40) //正常睡眠策略, 延时400ms
         {
+          _dis_400ms_cnt = 0;
           app_flag.disp_battery_level = 0;
         }
       }
@@ -187,7 +186,7 @@ static void LedDsp_content(void)
       Led_Clear_All(); 
       _dis_500ms_cnt = 0;
       _flash_cnt = 0;
-      // _dis_2s_cnt = 0;
+      // _dis_400ms_cnt = 0;
       _dis_500ms = 0;
       app_flag.sleep = 1; //进入睡眠命令统一由此发出, 由sleep运行event_handle退出
     }

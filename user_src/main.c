@@ -212,7 +212,7 @@ static void battery_deal(void)
 {
 	// Vref=2.4, 分压为1/2, Vin = 2*AD*2.4/4096+0.5(四舍五入), AD = (Vin)*4096/4.8+0.5(四舍五入)
 
-	if (app_flag.sys_ready == 0 || app_flag.sleep_updata)
+	if (app_flag.sys_ready == 0)// || app_flag.sleep_updata)
 	{
 		if (ADC_BATTERY_VALUE() >= 4000) //voltage over high
 		{

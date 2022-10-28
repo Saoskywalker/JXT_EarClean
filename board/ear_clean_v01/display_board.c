@@ -24,7 +24,7 @@ uint8_t Led_Display_init(void)
 uint8_t Led_Display_exit(void)
 {
   dis_start = 0;
-  // PWM_LED_SET_DUTY(0);
+  PWM_LED_SET_DUTY(0);
   LED_1TO4_ALL_SLEEP();
   return 0;
 }
