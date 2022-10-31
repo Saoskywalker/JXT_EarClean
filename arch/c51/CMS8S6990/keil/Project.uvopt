@@ -129,64 +129,36 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>76</LineNumber>
+          <LineNumber>49</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>-16776193</Address>
+          <Address>-16772998</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>user_src\envent_define.c</Filename>
+          <Filename>D:\project\K662\program\K662\arch\c51\CMS8S6990\keil\user_src\display_define.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\unnamed\ENVENT_DEFINE\76</Expression>
+          <Expression>\\unnamed\DISPLAY_DEFINE\49</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>87</LineNumber>
+          <LineNumber>39</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>-16776156</Address>
+          <Address>-16773039</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>user_src\envent_define.c</Filename>
+          <Filename>D:\project\K662\program\K662\arch\c51\CMS8S6990\keil\user_src\display_define.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\unnamed\ENVENT_DEFINE\87</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>98</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>-16776129</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>user_src\envent_define.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\unnamed\ENVENT_DEFINE\98</Expression>
+          <Expression>\\unnamed\DISPLAY_DEFINE\39</Expression>
         </Bp>
       </Breakpoint>
-      <WatchWindow1>
-        <Ww>
-          <count>0</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>app_work_mode</ItemText>
-        </Ww>
-        <Ww>
-          <count>1</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>EarClean_flag</ItemText>
-        </Ww>
-      </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -447,8 +419,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\user_src\EarClean_timer.c</PathWithFileName>
-      <FilenameWithoutPath>EarClean_timer.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\..\user_src\envent_define.c</PathWithFileName>
+      <FilenameWithoutPath>envent_define.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -460,8 +432,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\user_src\envent_define.c</PathWithFileName>
-      <FilenameWithoutPath>envent_define.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\..\user_src\main.c</PathWithFileName>
+      <FilenameWithoutPath>main.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -473,8 +445,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\user_src\main.c</PathWithFileName>
-      <FilenameWithoutPath>main.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\..\user_src\app_timer.c</PathWithFileName>
+      <FilenameWithoutPath>app_timer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

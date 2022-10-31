@@ -16,8 +16,8 @@
 
 //input
 #define SW_G_PIN() P24
-#define CHARGE_CHECK_PIN() P31
-#define CHARGE_FULL_PIN() P32
+#define IC4056_CHRG_PIN() P31
+#define IC4056_STDBY_PIN() P32
 
 //output
 #define MOTOR_PIN(x) P03 = x

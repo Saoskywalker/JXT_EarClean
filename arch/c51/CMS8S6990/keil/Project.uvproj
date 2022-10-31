@@ -449,11 +449,6 @@
               <FilePath>..\..\..\..\user_src\display_define.c</FilePath>
             </File>
             <File>
-              <FileName>EarClean_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\user_src\EarClean_timer.c</FilePath>
-            </File>
-            <File>
               <FileName>envent_define.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\user_src\envent_define.c</FilePath>
@@ -462,6 +457,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\user_src\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\user_src\app_timer.c</FilePath>
             </File>
           </Files>
         </Group>
