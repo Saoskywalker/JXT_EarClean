@@ -58,7 +58,7 @@ void adc_run(void)
             _adc_value[2] = adc_result >> 3;
         adc_result = 0;
 
-        if (++channel_count > ADC_CHANNEL_TOTAL)
+        if (++channel_count >= ADC_CHANNEL_TOTAL)
         {
             channel_count = 0;
             // printf("ad: %d, %d, %d\r\n", _adc_value[0], _adc_value[1], _adc_value[2]);
