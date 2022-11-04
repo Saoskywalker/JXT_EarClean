@@ -195,32 +195,44 @@ void Led_Scan(void)
   if (led_scan_position == 0)
   {
     if (LED_data[0]&bit0)
+    {
       LED1_ON();
+    }
   }
   else if (led_scan_position == 1)
   {
     if (LED_data[0]&bit1)
+    {
       LED2_ON();
+    }
   }
   else if (led_scan_position == 2)
   {
     if (LED_data[0]&bit2)
+    {
       LED3_ON();
+    }
   }
   else if (led_scan_position == 3)
   {
     if (LED_data[0]&bit3)
+    {
       LED4_R_ON();
+    }
   }
   else if (led_scan_position == 4)
   {
     if (LED_data[0]&bit4)
+    {
       LED4_G_ON();
+    }
   }
   else if (led_scan_position == 5)
   {
     if (LED_data[0]&bit5)
+    {
       LED4_B_ON();
+    }
   }
 
   if (++led_scan_position >= LED_SCAN_TOTAL)

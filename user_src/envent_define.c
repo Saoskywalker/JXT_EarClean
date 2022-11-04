@@ -88,7 +88,7 @@ void event_handle(void)
             {
                 if(app_flag.work)
                 {
-                    if (++light_mode > LED_MODE_C)
+                    if (++light_mode > LED_MODE_D)
                         light_mode = LED_MODE_A;
                 }
             }

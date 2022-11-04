@@ -46,7 +46,8 @@ typedef enum
 {
   LED_MODE_A = 0,
   LED_MODE_B,
-  LED_MODE_C
+  LED_MODE_C,
+  LED_MODE_D
 };
 
 typedef enum

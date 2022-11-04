@@ -61,22 +61,22 @@ static void LedDsp_content(void)
   static uint8_t _dis_charge_500ms = 0, _dis_charge_cnt = 0;
   static uint8_t _dis_500ms_cnt = 0, _dis_500ms = 0, _flash_cnt = 0, _dis_400ms_cnt = 0;
 
-  if (app_battery_level <= BATTERY_LOSE)
-  {
-    _dis_500ms_cnt++;
-    if (_dis_500ms_cnt >= 50)
+    if (app_battery_level <= BATTERY_LOSE)
+    {
+      _dis_500ms_cnt++;
+      if (_dis_500ms_cnt >= 50)
+      {
+        _dis_500ms_cnt = 0;
+        _dis_500ms ^= 0X01;
+        _flash_cnt++;
+      }
+    }
+    else
     {
       _dis_500ms_cnt = 0;
-      _dis_500ms ^= 0X01;
-      _flash_cnt++;
+      _flash_cnt = 0;
+      _dis_500ms = 0;
     }
-  }
-  else
-  {
-    _dis_500ms_cnt = 0;
-    _flash_cnt = 0;
-    _dis_500ms = 0;
-  }
 
   if(app_flag.sys_ready==0)
   {
@@ -118,14 +118,20 @@ static void LedDsp_content(void)
     {
       LED_LIGHT_GRADUAL(60);
     }
-    else
+    else if (light_mode == LED_MODE_C)
     {
       LED_LIGHT_GRADUAL(100);
     }
+    else
+    {
+      LED_LIGHT_GRADUAL(0);
+    }
   }
 
-  if (app_flag.usb_insert)
+  if (app_flag.usb_insert) //整体策略上禁止充电时睡眠
   {
+    _dis_400ms_cnt = 0;
+    
     //充电时电量灯闪, 充满常亮
     if (app_flag.charge_full)
     {
