@@ -210,6 +210,9 @@ static void temp_deal(void)
  */
 static void battery_deal(void)
 {
+	static uint16_t __temp1 = 1000, __temp2 = 1000;
+	static uint8_t __cnt = 0;
+
 	// Vref=2.4, 分压为1/2, Vin = 2*AD*2.4/4096+0.5(四舍五入), AD = (Vin)*4096/4.8+0.5(四舍五入)
 
 	if (app_flag.sys_ready == 0)// || app_flag.sleep_updata)
@@ -240,7 +243,35 @@ static void battery_deal(void)
 		}
 		return;
 	}
-	
+
+	//如果变化较大则进行多次确认
+	if (ADC_BATTERY_VALUE() >= __temp1 || ADC_BATTERY_VALUE() <= __temp2)
+	{
+		__temp1 = ADC_BATTERY_VALUE() + 32;
+		if (ADC_BATTERY_VALUE() >= 32)
+			__temp2 = ADC_BATTERY_VALUE() - 32;
+		else
+			__temp2 = 0;
+
+		__cnt = 0;
+		return;
+	}
+	else
+	{
+		//变化幅度大时重新确认, 变化幅度小时不重新确认
+		__temp1 = ADC_BATTERY_VALUE() + 32;
+		if (ADC_BATTERY_VALUE() >= 32)
+			__temp2 = ADC_BATTERY_VALUE() - 32;
+		else
+			__temp2 = 0;
+
+		if (__cnt < 9)
+		{
+			__cnt++;
+			return;
+		}
+	}
+
 	if(app_flag.usb_insert)
 	{
 		//单向往上走
